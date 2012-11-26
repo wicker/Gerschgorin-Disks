@@ -34,6 +34,11 @@ r = 0.3;      % radius of disc
 
 alpha = 10;   % choose a value to make c and r into integers
 
+% develop new c and r using alpha, they'll be adjusted back later
+
+c = alpha * c;
+r = alpha * r;
+
 A = [9 8 8 9; 2 7 4 7; 6 4 6 1; 4 0 7 1]; % nxn
 B = [9 0; 9 3; 4 8; 8 0]; % mxn
 C = [1 0 0 0];
@@ -43,7 +48,9 @@ sys = ss(A,B,C,D,0.25);
 
 % Calculate variables needed later
 
-q = n mod m;
+q = floor(n/m);
+display(q);
+
 dim_r = n - q * m;
 dim_s = m - r;
 
@@ -53,6 +60,7 @@ val_dim_s = q;
 % Find the open-loop eigenvalues
 
 A_eig = eig(A);
+display(A_eig);
 
 % Create explicit state-space model and calculate T
 
@@ -69,12 +77,19 @@ A_eig = eig(A);
 G_0 = csys.A(1:m,1:n);
 B_0 = csys.B(1:m,1:m);
 
+display(G_0);
+display(B_0);
+
+display(T);
 % Find F using G_0, B_0, and T_0
 
 B_0_inv = inv(B_0);
+display(B_0_inv);
 T_inv = inv(T);
+display(T_inv);
 
-F_p = -(B_0_inv) * G_0 * T_inv;
+F_p = -((B_0_inv) * G_0 * T_inv);
+display(F_p);
 
 % Find H for this particular system given above
 % h_1 = h(i,i)
@@ -82,17 +97,30 @@ F_p = -(B_0_inv) * G_0 * T_inv;
 % h_3 = h(1,j)
 
 % needs an error if it returns 0
-h_1 = r + c;   
- 
-% needs an error if temp_1 or temp_2 return 0
-temp_1 = abs(abs(c-r) - abs(h_1));
-temp_2 = abs(abs(c+r) - abs(h_1));
-temp = [temp_1 temp_2];
-h_2 = (1/alpha) * min(temp);
+h_1 = r + c;
 
+% needs an error if temp_1 or temp_2 return 0
 % needs the error if temp_1 or temp_2 return 0
 % there are n-1 places for h_3 and the sum can't be more than min(temp)
-h_3 = min(temp) / (n - 1);
+
+temp_1 = abs(abs(c-r) - abs(h_1));
+temp_2 = abs(abs(c+r) - abs(h_1));
+
+if temp_1 == 0
+    h_2 = (1/alpha) * temp_2;
+    h_3 = temp_2 / (n - 1);
+elseif temp_2 == 0
+    h_2 = (1/alpha) * temp_1;
+    h_3 = temp_1 / (n - 1);
+else
+    temp = [temp_1 temp_2];
+    h_2 = (1/alpha) * min(temp);
+    h_3 = min(temp) / (n - 1);
+end
+
+display(h_1);
+display(h_2);
+display(h_3);
 
 % Compose H of h elements
 
