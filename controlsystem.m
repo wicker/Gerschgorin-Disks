@@ -77,26 +77,22 @@ T_inv = inv(T);
 F_p = -(B_0_inv) * G_0 * T_inv;
 
 % Find H for this particular system given above
+% h_1 = h(i,i)
+% h_2 = h(m+i,i)
+% h_3 = h(1,j)
 
+% needs an error if it returns 0
+h_1 = r + c;   
+ 
+% needs an error if temp_1 or temp_2 return 0
+temp_1 = abs(abs(c-r) - abs(h_1));
+temp_2 = abs(abs(c+r) - abs(h_1));
+temp = [temp_1 temp_2];
+h_2 = (1/alpha) * min(temp);
 
-
-% Find actual values of h
-% h(1,j) = h_1j 
-% h(1,r+1) = h_1rp1
-% h(i,j) = h_ij 
-% h(i,i) = h_ii diagonal
-% h(r+1,r+1) = 
-% h(i,i+1)
-
-h_1j = 
-h_1rp1 = 
-h_ij = 
-h_ii = 
-
-% Build top row of H
-% H1j for j = 1,2,...,r
-
-H1j = [h1
+% needs the error if temp_1 or temp_2 return 0
+% there are n-1 places for h_3 and the sum can't be more than min(temp)
+h_3 = min(temp) / (n - 1);
 
 % Compose H of h elements
 
@@ -105,3 +101,23 @@ H1j = [h1
 %       0   H32 H33 ... 0     0      ;
 %       0   0   H43 ... rr    0      ;
 %       0   0   0   ... Hr+1r Hr+1r+1;]
+
+% But for now we build H by hand for the given example
+
+H = [h_1 h_3 h_3 h_3;
+     h_2 h_1 0   0  ;
+     0   h_2 h_1 0  ;
+     0   0   h_2 h_1;];
+
+% And create H_tilde and then pull H_0 by hand.
+% Not sure how to build H_tilde for a non-state space system representation
+% This is a single matrix -- BUT also it's square so maybe just jordan().
+
+[H_tilde_transform, H_tilde] = jordan(H);
+
+H_0 = H_tilde(1:m,1:n);
+
+% Eigenvalues of matrix H_tilde are same as eigenvalues of H.
+% Feedback matrix of csys.A and csys.B is K_tilde:
+
+K = F_p + B_0_inv * H_0 * T_inv;
