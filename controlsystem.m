@@ -121,3 +121,7 @@ H_0 = H_tilde(1:m,1:n);
 % Feedback matrix of csys.A and csys.B is K_tilde:
 
 K = F_p + B_0_inv * H_0 * T_inv;
+
+% Test closed-loop eigenvalues
+
+new_poles = eig(A - B*K);
