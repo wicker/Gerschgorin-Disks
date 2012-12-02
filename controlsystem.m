@@ -52,15 +52,15 @@ q = floor(n/m);
 display(q);
 
 dim_r = n - q * m;
-dim_s = m - r;
+dim_s = m - dim_r;
 
 val_dim_r = q + 1;
 val_dim_s = q;
 
-% Find the open-loop eigenvalues
+% Find the open-loop eigenvalues of the system
 
-A_eig = eig(A);
-display(A_eig);
+sys_eig = eig(sys);
+display(sys_eig);
 
 % Create explicit state-space model and calculate T
 
@@ -72,6 +72,11 @@ display(A_eig);
 
 
 
+% Calculate the primary vector companion forms of the system
+% Depends on Karbassi, Bell (1993)
+
+
+
 % Isolate G_0 and B_0 from resulting A,B in companion form
 
 G_0 = csys.A(1:m,1:n);
@@ -79,8 +84,8 @@ B_0 = csys.B(1:m,1:m);
 
 display(G_0);
 display(B_0);
-
 display(T);
+
 % Find F using G_0, B_0, and T_0
 
 B_0_inv = inv(B_0);
@@ -89,6 +94,7 @@ T_inv = inv(T);
 display(T_inv);
 
 F_p = -((B_0_inv) * G_0 * T_inv);
+
 display(F_p);
 
 % Find H for this particular system given above
@@ -145,11 +151,17 @@ H = [h_1 h_3 h_3 h_3;
 
 H_0 = H_tilde(1:m,1:n);
 
+display(H_0);
+
 % Eigenvalues of matrix H_tilde are same as eigenvalues of H.
 % Feedback matrix of csys.A and csys.B is K_tilde:
 
 K = F_p + B_0_inv * H_0 * T_inv;
 
+display(K);
+
 % Test closed-loop eigenvalues
 
 new_poles = eig(A - B*K);
+
+display(new_poles);
