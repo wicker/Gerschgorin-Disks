@@ -62,6 +62,14 @@ val_dim_s = q;
 sys_eig = eig(sys);
 display(sys_eig);
 
+% Build T from T = (B,AB) from paper
+
+T_pap = [0 0 0 0 ; 0 0 0 0 ; 0 0 0 0 ; 0 0 0 0];
+T_pap(1:4,1:2) = B;
+T_pap(1:4,3:4) = A*B
+
+T_pap_inv = inv(T_pap)
+
 % Create explicit state-space model and calculate T
 
 [csys,T] = canon(sys,'companion');
@@ -70,7 +78,26 @@ display(sys_eig);
 % ctrb(sys) yields the same as ctrb(A,B): a 4x8 matrix
 % which is not the same as the T resulting from canon();
 
+B;
+T_pap_inv;
+B_hat_pap = T_pap_inv * B
 
+% The A_hat_pap calculations below ought to work but don't
+% so we're going to build it by hand
+
+% A_hat_pap = T_pap_inv * A
+% A_hat_pap = A_hat_pap * T
+
+B(:,1);
+v_1 = T_pap_inv * A^2 * B(:,1);
+v_2 = T_pap_inv * A^2 * B(:,2);
+
+A_hat_pap(3:4,1:2) = [1 0 ; 0 1];
+A_hat_pap(:,3) = v_1;
+A_hat_pap(:,4) = v_2
+
+% B_hat_pap and A_hat_pap are now in standard echelon form that
+% agrees with the Karbassi paper
 
 % Calculate the primary vector companion forms of the system
 % Depends on Karbassi, Bell (1993)
@@ -82,20 +109,20 @@ display(sys_eig);
 G_0 = csys.A(1:m,1:n);
 B_0 = csys.B(1:m,1:m);
 
-display(G_0);
-display(B_0);
-display(T);
+%display(G_0);
+%display(B_0);
+%display(T);
 
 % Find F using G_0, B_0, and T_0
 
 B_0_inv = inv(B_0);
-display(B_0_inv);
+%display(B_0_inv);
 T_inv = inv(T);
-display(T_inv);
+%display(T_inv);
 
 F_p = -((B_0_inv) * G_0 * T_inv);
 
-display(F_p);
+%display(F_p);
 
 % Find H for this particular system given above
 % h_1 = h(i,i)
@@ -124,9 +151,9 @@ else
     h_3 = min(temp) / (n - 1);
 end
 
-display(h_1);
-display(h_2);
-display(h_3);
+%display(h_1);
+%display(h_2);
+%display(h_3);
 
 % Compose H of h elements
 
@@ -151,17 +178,17 @@ H = [h_1 h_3 h_3 h_3;
 
 H_0 = H_tilde(1:m,1:n);
 
-display(H_0);
+%display(H_0);
 
 % Eigenvalues of matrix H_tilde are same as eigenvalues of H.
 % Feedback matrix of csys.A and csys.B is K_tilde:
 
 K = F_p + B_0_inv * H_0 * T_inv;
 
-display(K);
+%display(K);
 
 % Test closed-loop eigenvalues
 
 new_poles = eig(A - B*K);
 
-display(new_poles);
+%display(new_poles);
