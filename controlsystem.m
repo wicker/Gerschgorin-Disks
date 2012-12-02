@@ -89,8 +89,8 @@ B_hat_pap = T_pap_inv * B
 % A_hat_pap = A_hat_pap * T
 
 B(:,1);
-v_1 = T_pap_inv * A^2 * B(:,1);
-v_2 = T_pap_inv * A^2 * B(:,2);
+v_1 = T_pap_inv * A^2 * B(:,1)
+v_2 = T_pap_inv * A^2 * B(:,2)
 
 A_hat_pap(3:4,1:2) = [1 0 ; 0 1];
 A_hat_pap(:,3) = v_1;
@@ -98,31 +98,49 @@ A_hat_pap(:,4) = v_2
 
 % B_hat_pap and A_hat_pap are now in standard echelon form that
 % agrees with the Karbassi paper
-
+%
 % Calculate the primary vector companion forms of the system
 % Depends on Karbassi, Bell (1993)
+% This form is more suited to working with control systems
 
+V_1 = A_hat_pap(1:2,3:4)
+V_2 = A_hat_pap(3:4,3:4)
 
+B_tilde_pap = [ 1 0 ; 0 1 ; 0 0 ; 0 0 ];
+A_tilde_pap(1:2,3:4) = V_1;
+A_tilde_pap(1:2,1:2) = V_2;
+A_tilde_pap(3:4,3:4) = 0
 
-% Isolate G_0 and B_0 from resulting A,B in companion form
+% Build transformation matrix S as per Karbassi paper 
 
-G_0 = csys.A(1:m,1:n);
-B_0 = csys.B(1:m,1:m);
+S_pap(1:2,1:2) = [1 0;0 1];
+S_pap(1:2,3:4) = V_2;
+S_pap(3:4,3:4) = [1 0; 0 1]
 
-%display(G_0);
-%display(B_0);
-%display(T);
+% Isolate G_0 and B_0 from the resulting A_tilde,B_tilde in companion form
+% These are the equations which did not work
+% G_0 = csys.A(1:m,1:n);
+% B_0 = csys.B(1:m,1:m);
+
+B_0_tilde = B_tilde_pap(1:m,1:m)
+G_tilde = A_tilde_pap(1:m,1:n)
 
 % Find F using G_0, B_0, and T_0
+% These are previous equations which did not work
+% B_0_inv = inv(B_0);
+% T_inv = inv(T);
+% F_p = -((B_0_inv) * G_0 * T_inv);
+% F_tilde below is absolutely correct for Tehrani and Karbassi
+% the problem is in F_p
+% Karbassi calls for:
+% F_p = F_tilde * inv(S_pap) * T_pap_inv
+% but Tehrani actually disregards inv(S) entirely here
+% F_p = F_tilde * T_pap_inv
+% This doesn't work either
+% Longer form in Tehrani depends on finding K_tilde by
+% K_tilde = F_tilde + inv(B_0) * H_0
 
-B_0_inv = inv(B_0);
-%display(B_0_inv);
-T_inv = inv(T);
-%display(T_inv);
-
-F_p = -((B_0_inv) * G_0 * T_inv);
-
-%display(F_p);
+F_tilde = - inv(B_0_tilde) * G_tilde
 
 % Find H for this particular system given above
 % h_1 = h(i,i)
@@ -151,10 +169,6 @@ else
     h_3 = min(temp) / (n - 1);
 end
 
-%display(h_1);
-%display(h_2);
-%display(h_3);
-
 % Compose H of h elements
 
 %  H = [H11 H12 H13 ... H1r   H1r+1  ;
@@ -176,19 +190,15 @@ H = [h_1 h_3 h_3 h_3;
 
 [H_tilde_transform, H_tilde] = jordan(H);
 
-H_0 = H_tilde(1:m,1:n);
-
-%display(H_0);
+H_0 = H_tilde(1:m,1:n)
 
 % Eigenvalues of matrix H_tilde are same as eigenvalues of H.
 % Feedback matrix of csys.A and csys.B is K_tilde:
 
-K = F_p + B_0_inv * H_0 * T_inv;
-
-%display(K);
+K = F_tilde + inv(B_0_tilde) * H_0
 
 % Test closed-loop eigenvalues
 
-new_poles = eig(A - B*K);
+%new_poles = eig(A - B*K);
 
 %display(new_poles);
