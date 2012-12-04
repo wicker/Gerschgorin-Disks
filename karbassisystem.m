@@ -34,7 +34,7 @@ B = [2 0 -2; 1 1 0 ; 0 0 2 ; 1 -1 0]; % nxm
 C = [1 0 0 0];
 D = 0;
 
-sys = ss(A,B,C,D,0.25);
+sys = ss(A,B,C,D,0.25)
 
 % Calculate variables needed later
 
