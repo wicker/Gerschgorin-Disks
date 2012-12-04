@@ -46,3 +46,18 @@ dim_s = m - dim_r
 val_dim_r = q + 1
 val_dim_s = q
 
+% Find the open-loop eigenvalues of the system
+
+sys_eig = eig(sys)
+
+% Build T from T = (B,AB) from paper
+
+T(1:4,1:3) = B;
+T(1:4,4:6) = A*B
+T_inv = pinv(T)
+
+% Build A_hat and B_hat from T
+
+A_hat = pinv(T) * A * T
+B_hat = pinv(T) * B
+
