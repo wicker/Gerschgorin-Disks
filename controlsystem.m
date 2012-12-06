@@ -124,7 +124,7 @@ G_tilde = A_tilde_pap(1:m,1:n)
 % Karbassi calls for:
 % F_p = F_tilde * inv(S_pap) * T_pap_inv
 % but Tehrani actually disregards inv(S) entirely here
-% F_p = F_tilde * T_pap_inv
+F_p = F_tilde * T_pap_inv
 % This doesn't work either
 % Longer form in Tehrani depends on finding K_tilde by
 % K_tilde = F_tilde + inv(B_0) * H_0
