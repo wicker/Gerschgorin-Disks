@@ -10,7 +10,6 @@
 % Released under the MIT License. 
 % Copyright (c) 2012 Jenner Hanni <jeh.wicker@gmail.com>
 
-
 clear all
 
 % Create Tehrani system, discrete-time system
@@ -29,7 +28,7 @@ alpha = 10;   % choose a value to make c and r into integers
 c = alpha * c;
 r = alpha * r;
 
-A = [9 8 8 9; 2 7 4 7; 6 4 6 1; 4 0 7 1]; % nxn
+A = [9 8 8 9; 2 7 4 7; 6 4 6 1; 4 0 7 4]; % nxn
 B = [9 0; 9 3; 4 8; 8 0]; % mxn
 C = [1 0 0 0];
 D = 0;
