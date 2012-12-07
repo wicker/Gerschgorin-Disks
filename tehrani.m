@@ -3,6 +3,9 @@
 % This is a script to reproduce the results of Tehrani's paper on placing 
 % the eigenvalues of a control system by way of Gershgorin's Theorem.
 
+% It produces matrices of the correct dimension and form but
+% with the wrong values. The comments contain alternate previous attempts.
+
 % Tehrani, H. A. "Assignment of Eigenvalues in a Disc D (c, r) of 
 % Complex Plane with Application of the Gerschgorin Theorem." 
 % World Applied Sciences Journal 5.5 (2008): 576-581.
@@ -188,6 +191,5 @@ K = F_tilde + inv(B_0_tilde) * H_0
 
 % Test closed-loop eigenvalues
 
-%new_poles = eig(A - B*K);
+new_poles = eig(A - B*K)
 
-%display(new_poles);

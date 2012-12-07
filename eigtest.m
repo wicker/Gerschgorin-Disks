@@ -1,3 +1,12 @@
+% Author: Jenner Hanniuthor: Jenner Hanni
+% Tested in Matlab 2011b on Linux machines. 
+
+% Trying to figure out what's going on with the eigenvalue differences
+% ... before I realized that it was a typo and felt like an epic dork.
+
+% Released under the MIT License. 
+% Copyright (c) 2012 Jenner Hanni <jeh.wicker@gmail.com>
+
 clear all
 
 A = [ 9 8 8 9 ; 2 7 4 7 ; 6 4 6 1 ; 4 0 7 4 ]
