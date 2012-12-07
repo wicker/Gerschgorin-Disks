@@ -24,6 +24,7 @@ r = 0.3;      % radius of disc
 alpha = 10;   % choose a value to make c and r into integers
 
 % develop new c and r using alpha, they'll be adjusted back later
+% load the matrices into a state-space system
 
 c = alpha * c;
 r = alpha * r;
@@ -49,7 +50,6 @@ val_dim_s = q;
 % Find the open-loop eigenvalues of the system
 
 sys_eig = eig(sys);
-display(sys_eig);
 
 % Build T from T = (B,AB) from paper
 
@@ -61,7 +61,7 @@ T_pap_inv = inv(T_pap)
 
 % Create explicit state-space model and calculate T
 
-[csys,T] = canon(sys,'companion');
+[csys,T] = canon(sys,'companion')
 
 % Check that T is the controllability matrix calculated separately
 % ctrb(sys) yields the same as ctrb(A,B): a 4x8 matrix
@@ -124,7 +124,7 @@ G_tilde = A_tilde_pap(1:m,1:n)
 % Karbassi calls for:
 % F_p = F_tilde * inv(S_pap) * T_pap_inv
 % but Tehrani actually disregards inv(S) entirely here
-F_p = F_tilde * T_pap_inv
+%F_p = F_tilde * T_pap_inv
 % This doesn't work either
 % Longer form in Tehrani depends on finding K_tilde by
 % K_tilde = F_tilde + inv(B_0) * H_0
@@ -171,7 +171,7 @@ end
 H = [h_1 h_3 h_3 h_3;
      h_2 h_1 0   0  ;
      0   h_2 h_1 0  ;
-     0   0   h_2 h_1;];
+     0   0   h_2 h_1;]
 
 % And create H_tilde and then pull H_0 by hand.
 % Not sure how to build H_tilde for a non-state space system representation
